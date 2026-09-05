@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // إنشاء نسخة مخصصة من Axios مع الرابط الأساسي للباك إند
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', // الرابط الأساسي من وثيقة الـ API
+  baseURL: import.meta.env.VITE_API_URL, // الرابط الأساسي من وثيقة الـ API
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
