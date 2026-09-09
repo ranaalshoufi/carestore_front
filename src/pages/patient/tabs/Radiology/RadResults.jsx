@@ -411,7 +411,7 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
                     <video src={`http://127.0.0.1:8000${selectedReport.image_path}`} controls className="absolute inset-0 w-full h-full object-contain" />
                   ) : selectedReport.image_path && /\.pdf$/i.test(selectedReport.image_path) ? (
                     <iframe src={`http://127.0.0.1:8000${selectedReport.image_path}`} className="absolute inset-0 w-full h-full bg-white" title="PDF Viewer" />
-                  ) : selectedReport.image_path && /\.(jpg|jpeg|png|webp|gif)$/i.test(selectedReport.image_path) ? (
+                  ) : selectedReport.image_path ? (
                     <img
                       src={`http://127.0.0.1:8000${selectedReport.image_path}`}
                       alt={selectedReport.modality}

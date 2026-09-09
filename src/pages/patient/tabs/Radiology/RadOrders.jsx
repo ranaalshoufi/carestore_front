@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardList, RefreshCw, Disc, Eye, Activity, BadgeCheck, ShieldCheck, Search, X } from 'lucide-react';
+import { ClipboardList, RefreshCw, Disc, Eye, Activity, BadgeCheck, ShieldCheck, Search, X, Trash2 } from 'lucide-react';
 import api from '../../../../utils/api';
 import { toast } from '../../../../utils/toast';
 import VisitSelector from '../../../../components/VisitSelector';
@@ -395,12 +395,13 @@ const RadOrders = ({ patient, onSelectOrder }) => {
                 <th className="py-3 text-[11px] font-bold text-[#003B73] uppercase tracking-wider text-center">Priority</th>
                 <th className="py-3 text-[11px] font-bold text-[#003B73] uppercase tracking-wider text-right">Status</th>
                 {isGlobalView && <th className="py-3 text-[11px] font-bold text-[#003B73] uppercase tracking-wider text-right">Action</th>}
+                {!isGlobalView && <th className="py-3 text-[11px] font-bold text-[#003B73] uppercase tracking-wider text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filteredWorkflows.length === 0 ? (
                 <tr>
-                  <td colSpan={isGlobalView ? 6 : 5} className="py-8 text-center text-gray-400">
+                  <td colSpan={isGlobalView ? 6 : 6} className="py-8 text-center text-gray-400">
                     {workflows.length === 0
                       ? 'No radiology requests recorded yet.'
                       : 'No radiology requests match the selected filters.'}
@@ -440,6 +441,28 @@ const RadOrders = ({ patient, onSelectOrder }) => {
                           className="inline-flex items-center px-3 py-1.5 bg-[#0046B5] text-white text-xs font-bold rounded hover:bg-blue-800 transition-colors"
                         >
                           Enter Results
+                        </button>
+                      </td>
+                    )}
+                    {!isGlobalView && (
+                      <td className="py-4 text-right">
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!window.confirm('هل تريد حذف طلب الأشعة هذا؟')) return;
+                            try {
+                              await api.delete(`/radiology-requests/${item.id}`);
+                              toast.success('تم حذف طلب الأشعة بنجاح');
+                              window.location.reload();
+                            } catch (err) {
+                              console.error('Error deleting radiology request:', err);
+                              toast.error('فشل حذف طلب الأشعة');
+                            }
+                          }}
+                          className="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors inline-flex items-center justify-center"
+                          title="حذف الطلب"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </button>
                       </td>
                     )}
