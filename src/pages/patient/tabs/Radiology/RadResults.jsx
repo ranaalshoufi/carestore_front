@@ -176,13 +176,17 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
                 {file ? (
                   selectedFileType === 'video' ? (
                     <video src={URL.createObjectURL(file)} controls className="w-full h-full object-contain" />
+                  ) : file.type === 'application/pdf' ? (
+                    <iframe src={URL.createObjectURL(file)} className="w-full h-full bg-white" title="PDF Preview" />
                   ) : (
                     <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-contain" />
                   )
-                ) : selectedOrder.image_path && isImage ? (
-                  <img src={`http://127.0.0.1:8000${selectedOrder.image_path}`} alt="Imaging" className="w-full h-full object-contain" />
                 ) : selectedOrder.image_path && isVideo ? (
                   <video src={`http://127.0.0.1:8000${selectedOrder.image_path}`} controls className="w-full h-full object-contain" />
+                ) : selectedOrder.image_path && /\.pdf$/i.test(selectedOrder.image_path) ? (
+                  <iframe src={`http://127.0.0.1:8000${selectedOrder.image_path}`} className="w-full h-full bg-white" title="PDF Preview" />
+                ) : selectedOrder.image_path && isImage ? (
+                  <img src={`http://127.0.0.1:8000${selectedOrder.image_path}`} alt="Imaging" className="w-full h-full object-contain" />
                 ) : selectedOrder.image_path ? (
                   <a href={`http://127.0.0.1:8000${selectedOrder.image_path}`} target="_blank" rel="noopener noreferrer" className="text-white text-sm font-semibold underline">
                     View attached file
@@ -405,18 +409,19 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
                 <div className="col-span-1 lg:col-span-3 bg-black rounded-lg shadow-sm border border-gray-800 min-h-[350px] relative flex flex-col justify-end overflow-hidden p-4 group cursor-crosshair">
                   {selectedReport.image_path && /\.(mp4|webm|mov|mpeg|avi)$/i.test(selectedReport.image_path) ? (
                     <video src={`http://127.0.0.1:8000${selectedReport.image_path}`} controls className="absolute inset-0 w-full h-full object-contain" />
-                  ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-30">
-                      <ImageIcon className="h-20 w-20 text-gray-400 mb-2" />
-                      <span className="text-gray-400 text-xs tracking-widest uppercase">{selectedReport.modality} Viewer</span>
-                    </div>
-                  )}
-                  {selectedReport.image_path && !/\.(mp4|webm|mov|mpeg|avi)$/i.test(selectedReport.image_path) && (
+                  ) : selectedReport.image_path && /\.pdf$/i.test(selectedReport.image_path) ? (
+                    <iframe src={`http://127.0.0.1:8000${selectedReport.image_path}`} className="absolute inset-0 w-full h-full bg-white" title="PDF Viewer" />
+                  ) : selectedReport.image_path && /\.(jpg|jpeg|png|webp|gif)$/i.test(selectedReport.image_path) ? (
                     <img
                       src={`http://127.0.0.1:8000${selectedReport.image_path}`}
                       alt={selectedReport.modality}
                       className="absolute inset-0 w-full h-full object-contain"
                     />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-30">
+                      <ImageIcon className="h-20 w-20 text-gray-400 mb-2" />
+                      <span className="text-gray-400 text-xs tracking-widest uppercase">{selectedReport.modality} Viewer</span>
+                    </div>
                   )}
                   <div className="relative z-10 flex items-center text-white text-[10px] font-mono w-full space-x-3 opacity-80 group-hover:opacity-100 transition-opacity">
                     <span>{selectedReport.modality}</span>
