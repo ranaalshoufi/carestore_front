@@ -42,8 +42,8 @@ const MainLayout = () => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: [1, 2, 3, 4, 5, 6] },
     { name: 'Patients', path: '/patients', icon: User, roles: [1, 2, 3, 6] },
     { name: 'Appointments', path: '/appointments', icon: Calendar, roles: [1, 2, 3, 6] },
-    { name: 'Laboratory', path: '/laboratory', icon: FlaskConical, roles: [1, 2, 4] },
-    { name: 'Radiology', path: '/radiology', icon: Activity, roles: [1, 2, 5] },
+    { name: 'Laboratory', path: '/laboratory', icon: FlaskConical, roles: [1, 4] },
+    { name: 'Radiology', path: '/radiology', icon: Activity, roles: [1, 5] },
     { name: 'Admin Settings', path: '/admin-settings', icon: Settings, roles: [1] },
     { name: 'My Profile', path: '/profile', icon: UserCircle, roles: [1, 2, 3, 4, 5, 6] },
   ];
