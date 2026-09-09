@@ -14,6 +14,14 @@ const extractEnglish = (name) => {
   return name.trim();
 };
 
+const getFullImageUrl = (pathOrUrl) => {
+  if (!pathOrUrl) return '';
+  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+    return pathOrUrl;
+  }
+  return `http://127.0.0.1:8000${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
+};
+
 const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
   const isGlobalView = !patient;
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,7 +65,7 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
               bodyPart: req.notes || 'Imaging Study',
               status: 'Final',
               report: req.report || 'No written report available for this study.',
-              image_path: req.image_path,
+              image_path: req.image_url || req.image_path,
               visitId: visit.visit_id,
               visitDate: visit.visit_date ? new Date(visit.visit_date.replace(' ', 'T')).toDateString() : ''
             });
@@ -182,13 +190,13 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
                     <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-contain" />
                   )
                 ) : selectedOrder.image_path && isVideo ? (
-                  <video src={`http://127.0.0.1:8000${selectedOrder.image_path}`} controls className="w-full h-full object-contain" />
+                  <video src={getFullImageUrl(selectedOrder.image_path)} controls className="w-full h-full object-contain" />
                 ) : selectedOrder.image_path && /\.pdf$/i.test(selectedOrder.image_path) ? (
-                  <iframe src={`http://127.0.0.1:8000${selectedOrder.image_path}`} className="w-full h-full bg-white" title="PDF Preview" />
+                  <iframe src={getFullImageUrl(selectedOrder.image_path)} className="w-full h-full bg-white" title="PDF Preview" />
                 ) : selectedOrder.image_path && isImage ? (
-                  <img src={`http://127.0.0.1:8000${selectedOrder.image_path}`} alt="Imaging" className="w-full h-full object-contain" />
+                  <img src={getFullImageUrl(selectedOrder.image_path)} alt="Imaging" className="w-full h-full object-contain" />
                 ) : selectedOrder.image_path ? (
-                  <a href={`http://127.0.0.1:8000${selectedOrder.image_path}`} target="_blank" rel="noopener noreferrer" className="text-white text-sm font-semibold underline">
+                  <a href={getFullImageUrl(selectedOrder.image_path)} target="_blank" rel="noopener noreferrer" className="text-white text-sm font-semibold underline">
                     View attached file
                   </a>
                 ) : (
@@ -408,12 +416,12 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
 
                 <div className="col-span-1 lg:col-span-3 bg-black rounded-lg shadow-sm border border-gray-800 min-h-[350px] relative flex flex-col justify-end overflow-hidden p-4 group cursor-crosshair">
                   {selectedReport.image_path && /\.(mp4|webm|mov|mpeg|avi)$/i.test(selectedReport.image_path) ? (
-                    <video src={`http://127.0.0.1:8000${selectedReport.image_path}`} controls className="absolute inset-0 w-full h-full object-contain" />
+                    <video src={getFullImageUrl(selectedReport.image_path)} controls className="absolute inset-0 w-full h-full object-contain" />
                   ) : selectedReport.image_path && /\.pdf$/i.test(selectedReport.image_path) ? (
-                    <iframe src={`http://127.0.0.1:8000${selectedReport.image_path}`} className="absolute inset-0 w-full h-full bg-white" title="PDF Viewer" />
+                    <iframe src={getFullImageUrl(selectedReport.image_path)} className="absolute inset-0 w-full h-full bg-white" title="PDF Viewer" />
                   ) : selectedReport.image_path ? (
                     <img
-                      src={`http://127.0.0.1:8000${selectedReport.image_path}`}
+                      src={getFullImageUrl(selectedReport.image_path)}
                       alt={selectedReport.modality}
                       className="absolute inset-0 w-full h-full object-contain"
                     />
@@ -438,7 +446,7 @@ const RadResults = ({ patient, selectedOrder, onBackToOrders }) => {
                   <div className="text-right">
                     {selectedReport.image_path && (
                       <a
-                        href={`http://127.0.0.1:8000${selectedReport.image_path}`}
+                        href={getFullImageUrl(selectedReport.image_path)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-end px-4 py-2 bg-[#0046B5] text-white text-sm font-bold rounded hover:bg-blue-800 transition-colors mb-2"
