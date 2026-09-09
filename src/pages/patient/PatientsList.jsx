@@ -3,6 +3,7 @@ import { Search, Plus, MoreVertical, Activity, X } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
 import AddEditPatient from './AddEditPatient'; // استدعاء مكون مودل الإضافة
+import { toast } from '../../utils/toast';
 
 const PatientsList = () => {
   const navigate = useNavigate();
@@ -124,12 +125,23 @@ const PatientsList = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {patients.map((patient) => (
-                  <tr 
-                    key={patient.patient_id || patient.mrn} 
-                    onClick={() => navigate(`/patients/${patient.patient_id}`)}
-                    className="hover:bg-blue-50 transition-colors cursor-pointer"
-                  >
+                {patients.map((patient) => {
+                  const userStr = localStorage.getItem('user');
+                  const user = userStr ? JSON.parse(userStr) : null;
+                  const roleId = user ? Number(user.role_id) : 1;
+
+                  return (
+                    <tr 
+                      key={patient.patient_id || patient.mrn} 
+                      onClick={() => {
+                        if (roleId === 6) {
+                          toast.info('موظف الاستقبال مخصص لإضافة والبحث عن المرضى فقط، ولا يمتلك صلاحية استعراض الملفات الطبية والتفصيلية.');
+                          return;
+                        }
+                        navigate(`/patients/${patient.patient_id}`);
+                      }}
+                      className={`transition-colors ${roleId === 6 ? 'cursor-default hover:bg-white' : 'hover:bg-blue-50 cursor-pointer'}`}
+                    >
                     <td className="px-6 py-4 text-sm font-bold text-[#0046B5] font-mono">
                       {patient.mrn || 'N/A'}
                     </td>
@@ -151,8 +163,9 @@ const PatientsList = () => {
                         <MoreVertical className="h-5 w-5 mx-auto" />
                       </button>
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

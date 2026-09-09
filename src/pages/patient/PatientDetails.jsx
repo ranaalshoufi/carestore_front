@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Edit, User } from 'lucide-react';
 import api from '../../utils/api';
+import { toast } from '../../utils/toast';
 
 // الاستيراد الصحيح لأن مجلد tabs أصبح بجانب هذا الملف مباشرة
 import OverviewTab from './tabs/OverviewTab';
@@ -44,6 +45,16 @@ const PatientDetails = () => {
 
   // جلب بيانات المريض الفعلية من الباك إند (يتم تحديثها تلقائياً عند تغيير التبويب لضمان المزامنة)
   const fetchPatientDetails = async () => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const roleId = user ? Number(user.role_id) : 1;
+
+    if (roleId === 6) {
+      toast.error('غير مسموح لموظف الاستقبال استعراض تفاصيل وملفات المرضى.');
+      navigate('/patients');
+      return;
+    }
+
     try {
       const response = await api.get(`/patients/${id}`);
       const patientData = response.data;
@@ -57,6 +68,16 @@ const PatientDetails = () => {
   };
 
   useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const roleId = user ? Number(user.role_id) : 1;
+
+    if (roleId === 6) {
+      toast.error('غير مسموح لموظف الاستقبال استعراض تفاصيل وملفات المرضى.');
+      navigate('/patients');
+      return;
+    }
+
     if (id) {
       fetchPatientDetails();
     }
